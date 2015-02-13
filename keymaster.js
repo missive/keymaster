@@ -64,7 +64,7 @@
 
   // handle keydown event
   function dispatch(event) {
-    var key, handler, k, i, modifiersMatch, scope;
+    var key, handler, k, i, modifiersMatch, scope, filtered;
     key = event.keyCode;
 
     if (index(_downKeys, key) == -1) {
@@ -83,7 +83,7 @@
 
     // see if we need to ignore the keypress (filter() can can be overridden)
     // by default ignore key presses if a select, textarea, or input is focused
-    if(!assignKey.filter.call(this, event)) return;
+    filtered = !assignKey.filter.call(this, event)
 
     // abort if no potentially matching shortcuts found
     if (!(key in _handlers)) return;
@@ -93,6 +93,9 @@
     // for each potential shortcut
     for (i = 0; i < _handlers[key].length; i++) {
       handler = _handlers[key][i];
+
+      // only ignore keypress if key assignment isn’t important
+      if (filtered && !handler.important) continue;
 
       // see if it's in the current scope
       if(handler.scope == scope || handler.scope == 'all'){
@@ -138,7 +141,7 @@
 
   // parse and assign shortcut
   function assignKey(key, scope, method){
-    var keys, mods;
+    var keys, mods, important;
     keys = getKeys(key);
     if (method === undefined) {
       method = scope;
@@ -147,9 +150,14 @@
 
     // for each shortcut
     for (var i = 0; i < keys.length; i++) {
+      shortcut = keys[i];
+      if (shortcut != '!' && (split = shortcut.split('!')).length > 1) {
+        shortcut = split[1];
+        important = true;
+      }
       // set modifier keys if any
       mods = [];
-      key = keys[i].split('+');
+      key = shortcut.split('+');
       if (key.length > 1){
         mods = getMods(key);
         key = [key[key.length-1]];
@@ -159,7 +167,7 @@
       key = code(key);
       // ...store handler
       if (!(key in _handlers)) _handlers[key] = [];
-      _handlers[key].push({ shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods });
+      _handlers[key].push({ shortcut: shortcut, scope: scope, method: method, key: shortcut, mods: mods, important: important });
     }
   };
 
