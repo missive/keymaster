@@ -7,6 +7,7 @@
     _handlers = {},
     _mods = { 16: false, 18: false, 17: false, 91: false },
     _scope = 'all',
+    _preventKeypress = false,
     // modifier keys
     _MODIFIERS = {
       '⇧': 16, shift: 16,
@@ -64,8 +65,9 @@
 
   // handle keydown event
   function dispatch(event) {
-    var key, handler, k, i, modifiersMatch, scope, filtered;
+    var key, handler, k, i, scope, filtered, pressed;
     key = event.keyCode;
+    pressed = !!event.charCode
 
     if (index(_downKeys, key) == -1) {
         _downKeys.push(key);
@@ -99,13 +101,10 @@
 
       // see if it's in the current scope
       if(handler.scope == scope || handler.scope == 'all'){
-        // check if modifiers match if any
-        modifiersMatch = handler.mods.length > 0;
-        for(k in _mods)
-          if((!_mods[k] && index(handler.mods, +k) > -1) ||
-            (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
         // call the handler and stop the event if neccessary
-        if((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch){
+        if(modifiersMatch(handler, pressed)){
+          if(!pressed) _preventKeypress = true;
+
           if(handler.method(event, handler)===false){
             if(event.preventDefault) event.preventDefault();
               else event.returnValue = false;
@@ -116,6 +115,21 @@
       }
     }
   };
+
+  function modifiersMatch(handler, pressed){
+    var modifiersMatch;
+
+    if(!handler.mods.length && pressed)
+      return true
+
+    // check if modifiers match if any
+    modifiersMatch = handler.mods.length > 0;
+    for(k in _mods)
+      if((!_mods[k] && index(handler.mods, +k) > -1) ||
+        (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+
+    return (handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch
+  }
 
   // unset modifier keys on keyup
   function clearModifier(event){
@@ -132,6 +146,9 @@
       _mods[key] = false;
       for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = false;
     }
+
+    // reset keypress prevention
+    _preventKeypress = false
   };
 
   function resetModifiers() {
@@ -272,7 +289,8 @@
   };
 
   // set the handlers globally on document
-  addEvent(document, 'keydown', function(event) { dispatch(event) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+  addEvent(document, 'keypress', function(event) { if(!_preventKeypress) dispatch(event) });
+  addEvent(document, 'keydown', function(event) { dispatch(event) });
   addEvent(document, 'keyup', clearModifier);
 
   // reset modifiers to false whenever the window is (re)focused.
