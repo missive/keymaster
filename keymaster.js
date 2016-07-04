@@ -116,8 +116,13 @@
   function modifiersMatch(handler, pressed){
     var modifiersMatch;
 
-    if(!handler.mods.length && pressed)
-      return true
+    if(pressed){
+      if(/\b(left|up|right|down)\b/.test(handler.key))
+        return false
+
+      if(!handler.mods.length)
+        return true
+    }
 
     // check if modifiers match if any
     modifiersMatch = handler.mods.length > 0;
