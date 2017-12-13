@@ -67,7 +67,7 @@
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, scope, filtered, pressed;
-    key = event.keyCode;
+    key = event.keyCode || event.which;
     pressed = !!event.charCode
 
     if (index(_downKeys, key) == -1) {
@@ -139,7 +139,7 @@
 
   // unset modifier keys on keyup
   function clearModifier(event){
-    var key = event.keyCode, k,
+    var key = event.keyCode || event.which, k,
         i = index(_downKeys, key);
 
     // remove key from _downKeys
