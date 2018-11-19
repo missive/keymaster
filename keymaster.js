@@ -64,10 +64,21 @@
       for(k in _mods) _mods[k] = event[modifierMap[k]];
   };
 
+  // iPad arrow keys
+  function iPadArrowKeyCode(event) {
+    var match
+
+    if (event.key && (match = /UIKeyInput(Left|Up|Right|Down)Arrow/.exec(event.key))) {
+      return _MAP[match[1].toLowerCase()]
+    }
+
+    return 0
+  }
+
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, scope, filtered, pressed;
-    key = event.keyCode || event.which;
+    key = event.keyCode || event.which || iPadArrowKeyCode(event);
     pressed = !!event.charCode
 
     if (index(_downKeys, key) == -1) {
@@ -139,7 +150,7 @@
 
   // unset modifier keys on keyup
   function clearModifier(event){
-    var key = event.keyCode || event.which, k,
+    var key = event.keyCode || event.which || iPadArrowKeyCode(event), k,
         i = index(_downKeys, key);
 
     // remove key from _downKeys
