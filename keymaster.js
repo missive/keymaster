@@ -72,6 +72,19 @@
     return 0
   }
 
+  // Fix AltGraph key press
+  // AltGraph triggers control + alt events where only the alt is detactable.
+  // When detected, force both control and alt to be false.
+  function fixAltGr(event) {
+    var key = event.key
+
+    if (key && key.toLowerCase() == 'altgraph') {
+      _mods[17] = false
+      _mods[18] = false
+      return true
+    }
+  }
+
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, scope, filtered, pressed;
@@ -85,6 +98,7 @@
     // if a modifier key, set the key.<modifierkeyname> property to true and return
     if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
     if(key in _mods) {
+      if (fixAltGr(event)) return;
       _mods[key] = true;
       // 'assignKey' from inside this closure is exported to window.key
       for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
