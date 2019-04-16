@@ -96,13 +96,15 @@
     }
 
     // if a modifier key, set the key.<modifierkeyname> property to true and return
-    if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-    if(key in _mods) {
-      if (fixAltGr(event)) return;
-      _mods[key] = true;
-      // 'assignKey' from inside this closure is exported to window.key
-      for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
-      return;
+    if(!pressed) {
+      if(key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+      if(key in _mods) {
+        if (fixAltGr(event)) return;
+        _mods[key] = true;
+        // 'assignKey' from inside this closure is exported to window.key
+        for(k in _MODIFIERS) if(_MODIFIERS[k] == key) assignKey[k] = true;
+        return;
+      }
     }
 
     // see if we need to ignore the keypress (filter() can can be overridden)
