@@ -60,6 +60,9 @@
       17:'ctrlKey',
       91:'metaKey'
   };
+  function updateModifierKey(event) {
+      for(k in _mods) _mods[k] = event[modifierMap[k]];
+  };
 
   // iPad arrow keys
   function iPadArrowKeyCode(event) {
@@ -106,6 +109,7 @@
         return;
       }
     }
+    updateModifierKey(event);
 
     // see if we need to ignore the keypress (filter() can can be overridden)
     // by default ignore key presses if a select, textarea, or input is focused
