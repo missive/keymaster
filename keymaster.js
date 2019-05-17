@@ -96,7 +96,7 @@
 
     if (!pressed && event.key == 'Dead') {
       var match = event.code.match(/^Key([a-z]){1}$/i)
-      key = code(match[1])
+      if (match) key = code(match[1])
     }
 
     if (index(_downKeys, key) == -1) {
