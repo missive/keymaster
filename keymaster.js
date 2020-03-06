@@ -26,10 +26,6 @@
       home: 36, end: 35,
       pageup: 33, pagedown: 34,
       plus: 187, minus: 189,
-      ',': 188, '.': 190, '/': 191,
-      '`': 192, '-': 189, '=': 187,
-      ';': 186, '\'': 222,
-      '[': 219, ']': 221, '\\': 220
     },
     code = function(x){
       return _MAP[x] || x.toUpperCase().charCodeAt(0);

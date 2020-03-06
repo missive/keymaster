@@ -75,7 +75,10 @@
       return false;
     });
 
-    key('/', function(){ console.log('/') });
+    [',', '.', '/', '`', '-', '=',';', ':', '"', '\'', '[', ']', '{', '}', '\\', '@', '?', '#'].forEach((char) => {
+      key(char, function(){ console.log(`=> ${char}`) });
+    })
+
     key('shift+]', function(){ console.log('shift+]') });
 
     key('⌘+alt+n', function(){ console.log('⌘+alt+n'); return false });
