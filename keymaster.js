@@ -24,7 +24,7 @@
       right: 39, down: 40,
       del: 46, 'delete': 46,
       home: 36, end: 35,
-      pageup: 33, pagedown: 34,
+      pageup: 'PageUp', pagedown: 'PageDown',
       plus: 187, minus: 189,
       ',': 188, '.': 190, '/': 191,
       '`': 192, '-': 189, '=': 187,
@@ -91,8 +91,13 @@
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, scope, filtered, pressed;
-    key = event.keyCode || event.which || iPadArrowKeyCode(event);
+
     pressed = !!event.charCode
+    if (event.key in _handlers) {
+      key = event.key
+    } else {
+      key = event.keyCode || event.which || iPadArrowKeyCode(event);
+    }
 
     if (!pressed && event.key == 'Dead') {
       var match = event.code.match(/^Key([a-z]){1}$/i)
