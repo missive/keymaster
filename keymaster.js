@@ -93,7 +93,7 @@
     var key, handler, k, i, scope, filtered, pressed;
 
     pressed = !!event.charCode
-    if (event.key in _handlers) {
+    if (event.key in _handlers && !parseInt(event.key)) {
       key = event.key
     } else {
       key = event.keyCode || event.which || iPadArrowKeyCode(event);
